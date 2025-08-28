@@ -1,13 +1,13 @@
 import glob
-import sys
 import os
+import sys
 
 import typer
 from loguru import logger
 
-from readme_weaver.readme_weaver import ReadmeWeaver
 from readme_weaver.include_content_reader import IncludeContentReader
 from readme_weaver.include_metadata_extractor import IncludeMetadataExtractor
+from readme_weaver.readme_weaver import ReadmeWeaver
 
 """
 CLI entry point for the ReadmeWeaver tool.

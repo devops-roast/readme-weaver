@@ -14,8 +14,8 @@ optional ``required`` attributes. Once a corresponding end tag is found, an
 be replaced and the file to be included.
 """
 
-from typing import Protocol, Optional
 import re
+from typing import Optional, Protocol
 
 from .include_metadata import IncludeMetadata
 
@@ -44,9 +44,7 @@ class IncludeMetadataExtractor:
         self._include_start_regex = re.compile(
             r"<!--\s*md:include\s+start\s+([^>]*)-->", re.IGNORECASE
         )
-        self._include_end_regex = re.compile(
-            r"<!--\s*md:include\s+end\s*-->", re.IGNORECASE
-        )
+        self._include_end_regex = re.compile(r"<!--\s*md:include\s+end\s*-->", re.IGNORECASE)
 
     def extract(self, readme_content: list[str]) -> list[IncludeMetadata]:
         includes: list[IncludeMetadata] = []

@@ -11,9 +11,9 @@ specified via the ``base_dir`` argument or the ``README_WEAVER_BASE``
 environment variable.  Absolute paths are used as‑is.
 """
 
-from typing import Protocol, List
-from pathlib import Path
 import os
+from pathlib import Path
+from typing import List, Protocol
 
 from .include_metadata import IncludeMetadata
 
@@ -40,9 +40,7 @@ class IncludeContentReader:
         # Determine base directory for relative include paths.  If provided
         # explicitly, use that; otherwise use README_WEAVER_BASE environment
         # variable or default to current working directory.
-        self._base_dir = Path(
-            base_dir or os.environ.get("README_WEAVER_BASE", ".")
-        ).resolve()
+        self._base_dir = Path(base_dir or os.environ.get("README_WEAVER_BASE", ".")).resolve()
 
     def read(self, includes: List[IncludeMetadata]) -> List[IncludeMetadata]:
         processed: List[IncludeMetadata] = []
@@ -50,9 +48,7 @@ class IncludeContentReader:
             if inc.extraction_type != "include":
                 raise ValueError(f"Unsupported extraction type {inc.extraction_type}.")
             inc_path = Path(inc.path)
-            full_path = (
-                inc_path if inc_path.is_absolute() else (self._base_dir / inc_path)
-            )
+            full_path = inc_path if inc_path.is_absolute() else (self._base_dir / inc_path)
             if not full_path.exists():
                 if inc.required:
                     raise FileNotFoundError(

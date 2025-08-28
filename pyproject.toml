@@ -29,5 +29,5 @@ build-backend = "hatchling.build"
 [tool.ruff]
 line-length = 95
 lint.select = ["E", "F", "I", "BLE", "UP"]
-ignore = ["UP006", "E501"]
+lint.ignore = ["UP006", "E501", "E741", "UP035"]
 target-version = "py39"

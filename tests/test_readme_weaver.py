@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from readme_weaver.include_metadata_extractor import IncludeMetadataExtractor
 from readme_weaver.include_content_reader import IncludeContentReader
+from readme_weaver.include_metadata_extractor import IncludeMetadataExtractor
 from readme_weaver.readme_weaver import ReadmeWeaver
 
 
@@ -48,7 +48,9 @@ def test_include_replaces_content(tmp_path: Path, monkeypatch) -> None:
 def test_missing_required_raises(tmp_path: Path, monkeypatch) -> None:
     """A missing required include should raise FileNotFoundError."""
     readme = tmp_path / "README.md"
-    content = 'Intro\n<!-- md:include start path="missing.md" -->\ntext\n<!-- md:include end -->\n'
+    content = (
+        'Intro\n<!-- md:include start path="missing.md" -->\ntext\n<!-- md:include end -->\n'
+    )
     write_file(readme, content)
     monkeypatch.setenv("README_WEAVER_BASE", str(tmp_path))
     extractor = IncludeMetadataExtractor()
@@ -83,9 +85,7 @@ def test_missing_not_required_is_empty(tmp_path: Path, monkeypatch) -> None:
     assert "placeholder" not in updated
 
     lines = updated.splitlines()
-    start_idx = [
-        i for i, l in enumerate(lines) if l.startswith("<!-- md:include start")
-    ][0]
+    start_idx = [i for i, l in enumerate(lines) if l.startswith("<!-- md:include start")][0]
     end_idx = [i for i, l in enumerate(lines) if l.startswith("<!-- md:include end")][0]
 
     assert end_idx == start_idx + 2

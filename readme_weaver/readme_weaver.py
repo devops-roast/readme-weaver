@@ -59,9 +59,7 @@ class ReadmeWeaver:
     def _extract_includes(
         self, readme_content: list[str], readme_path: str
     ) -> Optional[list[IncludeMetadata]]:
-        includes = self._include_metadata_extractor.extract(
-            readme_content=readme_content
-        )
+        includes = self._include_metadata_extractor.extract(readme_content=readme_content)
         if not includes:
             logger.debug(
                 f"No include directives found in README at path {readme_path}. Skipping."
@@ -83,9 +81,7 @@ class ReadmeWeaver:
         readme_content_cursor = 0
 
         for include in sorted(include_contents, key=lambda x: x.readme_start):
-            updated_readme += readme_content[
-                readme_content_cursor : include.readme_start + 1
-            ]
+            updated_readme += readme_content[readme_content_cursor : include.readme_start + 1]
             updated_readme += include.content + "\n"
 
             readme_content_cursor = include.readme_end
