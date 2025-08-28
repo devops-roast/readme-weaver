@@ -15,7 +15,7 @@ be replaced and the file to be included.
 """
 
 import re
-from typing import Optional, Protocol
+from typing import Protocol
 
 from .include_metadata import IncludeMetadata
 
@@ -48,7 +48,7 @@ class IncludeMetadataExtractor:
 
     def extract(self, readme_content: list[str]) -> list[IncludeMetadata]:
         includes: list[IncludeMetadata] = []
-        current: Optional[dict] = None
+        current: dict | None = None
 
         for row, line in enumerate(readme_content):
             start_match = self._include_start_regex.search(line)

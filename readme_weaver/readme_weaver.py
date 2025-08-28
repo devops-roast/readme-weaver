@@ -1,5 +1,3 @@
-from typing import Optional
-
 from loguru import logger
 
 from readme_weaver.include_content_reader import IncludeContentReaderInterface
@@ -11,7 +9,7 @@ class ReadmeWeaver:
     def __init__(
         self,
         readme_paths: list[str],
-        changed_files: Optional[list[str]],
+        changed_files: list[str] | None,
         include_metadata_extractor: IncludeMetadataExtractorInterface,
         include_content_reader: IncludeContentReaderInterface,
     ) -> None:
@@ -58,7 +56,7 @@ class ReadmeWeaver:
 
     def _extract_includes(
         self, readme_content: list[str], readme_path: str
-    ) -> Optional[list[IncludeMetadata]]:
+    ) -> list[IncludeMetadata] | None:
         includes = self._include_metadata_extractor.extract(readme_content=readme_content)
         if not includes:
             logger.debug(

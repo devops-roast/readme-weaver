@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Literal, Optional
+from typing import Literal
 
 
 @dataclass
@@ -26,6 +26,6 @@ class IncludeMetadata:
     readme_end: int
     path: str
     extraction_type: Literal["include"] = "include"
-    extraction_part: Optional[str] = None
+    extraction_part: str | None = None
     required: bool = True
     content: str = ""
