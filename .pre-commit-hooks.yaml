@@ -1,8 +1,8 @@
 ---
-- id: readmer-weaver
-  name: readmer-weaver
+- id: readme-weaver
+  name: readme-weaver
   description: >
-    Keep your READMEs up-to-date!
-  entry: readmer-weaver run
+    Seamlessly embed shared markdown into your README files!
+  entry: readme-weaver run
   types: [markdown]
   language: python
