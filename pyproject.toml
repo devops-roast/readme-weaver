@@ -1,27 +1,30 @@
-[tool.poetry]
+[project]
 name = "readme-weaver"
-version = "v1.0.0"
+version = "1.0.0"
 description = "Embed raw markdown partials into README files"
-authors = ["Oleksandr Ponomarov <ponomarov.aleksandr@gmail.com>"]
 readme = "README.md"
-license = "Apache 2.0"
+requires-python = ">=3.9"
+authors = [
+  { name = "Oleksandr Ponomarov ", email = "ponomarov.aleksandr@gmail.com" }
+]
+license = { text = "Apache 2.0" }
+dependencies = [
+  "loguru>=0.7.2",
+  "typer-slim>=0.13.0"
+]
 
-[tool.poetry.scripts]
+[project.scripts]
 readme-weaver = "readme_weaver.main:app"
 
-[tool.poetry.dependencies]
-python = "^3.9"
-loguru = "^0.7.2"
-typer-slim = "^0.13.0"
-
-[tool.poetry.group.dev.dependencies]
-pre-commit = "^4.0.1"
-pytest = "^8.3.3"
-ruff = "^0.7.0"
+[project.optional-dependencies]
+all = [
+  "pytest>=8.3.3",
+  "ruff>=0.7.0"
+]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.ruff]
 line-length = 95
