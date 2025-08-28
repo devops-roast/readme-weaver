@@ -1,5 +1,6 @@
 import glob
 import sys
+import os
 
 import typer
 from loguru import logger
@@ -8,8 +9,18 @@ from readme_weaver.readme_weaver import ReadmeWeaver
 from readme_weaver.include_content_reader import IncludeContentReader
 from readme_weaver.include_metadata_extractor import IncludeMetadataExtractor
 
+"""
+CLI entry point for the ReadmeWeaver tool.
+
+This module configures logging based on an environment variable or a command line
+option and exposes a ``run`` command that processes markdown files in the current
+repository.  Use the ``--log-level`` option or set the ``LOG_LEVEL`` environment
+variable to control the verbosity of the output.  If neither is provided, the
+default level is INFO.
+"""
+
+# Remove any default handlers so logging can be configured in the ``run`` command.
 logger.remove()
-logger.add(sys.stderr, level="DEBUG")
 
 app = typer.Typer(rich_markup_mode=None)
 
@@ -31,6 +42,15 @@ def run(
             "Defaults to the README_WEAVER_BASE environment variable or the current working directory."
         ),
     ),
+    log_level: str = typer.Option(
+        None,
+        "--log-level",
+        "-l",
+        help=(
+            "Set the logging level (e.g. DEBUG, INFO, WARNING, ERROR). "
+            "If not provided, defaults to the value of the LOG_LEVEL environment variable or INFO."
+        ),
+    ),
 ):
     """
     Entry point for the CLI.  Scans all markdown files in the repository for
@@ -41,6 +61,11 @@ def run(
     environment variable and determines how relative include paths are
     resolved.
     """
+    env_level = os.environ.get("LOG_LEVEL")
+    effective_level = (log_level or env_level or "INFO").upper()
+    logger.remove()
+    logger.add(sys.stderr, level=effective_level)
+
     readme_paths = glob.glob("**/*.md", recursive=True)
 
     if not readme_paths:
