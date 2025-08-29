@@ -16,3 +16,4 @@ jobs:
     secrets: inherit
     with:
       type: python
+      config: .github/release-please-config.json
