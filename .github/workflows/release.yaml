@@ -15,4 +15,4 @@ jobs:
     uses: devops-roast/github-actions/.github/workflows/release-please-standard.yaml@main
     secrets: inherit
     with:
-      type: python
+      config: release-please-config.json
