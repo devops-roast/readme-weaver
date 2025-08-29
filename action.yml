@@ -1,0 +1,23 @@
+name: "Readme Weaver"
+description: Embed shared markdown into README files using include directives.
+author: Oleksandr Ponomarov
+branding:
+  icon: book-open
+  color: blue
+
+inputs:
+  base-dir:
+    description: Base directory for resolving relative include paths. If blank, defaults to the current directory.
+    required: false
+    default: ""
+  log-level:
+    description: Logging level (DEBUG, INFO, WARNING, ERROR). If blank, defaults to INFO.
+    required: false
+    default: ""
+
+runs:
+  using: docker
+  image: Dockerfile
+  env:
+    README_WEAVER_BASE: ${{ inputs.base-dir }}
+    LOG_LEVEL: ${{ inputs.log-level }}
