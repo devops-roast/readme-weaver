@@ -94,7 +94,7 @@ jobs:
           ref: main
 
       - name: run readme weaver
-        uses: devops-roast/readme-weaver@v1
+        uses: devops-roast/readme-weaver@v0
         env:
           LOG_LEVEL: DEBUG
           # base directory for include files (if needed)
