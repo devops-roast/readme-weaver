@@ -1,0 +1,36 @@
+[project]
+name = "readme-weaver"
+version = "1.0.0"
+description = "Embed raw markdown partials into README files"
+readme = "README.md"
+requires-python = ">=3.13"
+authors = [
+  { name = "Oleksandr Ponomarov ", email = "ponomarov.aleksandr@gmail.com" }
+]
+license = { file = "LICENSE" }
+dependencies = [
+  "loguru>=0.7.3",
+  "typer-slim>=0.16.1"
+]
+
+[project.urls]
+Home = "https://github.com/devops-roast/readme-weaver"
+
+[project.scripts]
+readme-weaver = "readme_weaver.main:app"
+
+[project.optional-dependencies]
+all = [
+  "pytest>=8.4.1",
+  "ruff>=0.12.11"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 95
+lint.select = ["E", "F", "I", "BLE", "UP"]
+lint.ignore = ["UP006", "E501", "E741", "UP035"]
+target-version = "py313"

@@ -1,0 +1,19 @@
+---
+name: pre-commit
+
+permissions:
+  id-token: write
+  contents: write
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  pre-commit:
+    uses: devops-roast/github-actions/.github/workflows/pre-commit.yaml@main
+    with:
+      auto_commit: true
+    secrets: inherit

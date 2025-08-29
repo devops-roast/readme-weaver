@@ -1,0 +1,8 @@
+---
+- id: readme-weaver
+  name: readme-weaver
+  description: >
+    Seamlessly embed shared markdown into your README files!
+  entry: readme-weaver run
+  types: [markdown]
+  language: python
