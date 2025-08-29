@@ -107,7 +107,7 @@ Readme Weaver can run as a pre‑commit hook to ensure your includes are always
 up‑to‑date before committing. To install via PyPI:
 
 ```bash
-pip install readme-weaver==v1.0.0
+pip install readme-weaver
 ```
 
 Then add this to your `.pre-commit-config.yaml`:
@@ -125,7 +125,7 @@ If you prefer to reference the repository directly:
 
 ```yaml
 - repo: https://github.com/devops-roast/readme-weaver
-  rev: v1.0.0
+  rev: v0.1.0
   hooks:
     - id: readme-weaver
 ```
