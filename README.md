@@ -99,7 +99,7 @@ jobs:
         run: echo "/.partials/" >> .git/info/exclude
 
       - name: run readme weaver
-        uses: devops-roast/readme-weaver@v0.1.1 # x-release-please-version
+        uses: devops-roast/readme-weaver@v0.1.2 # x-release-please-version
         env:
           LOG_LEVEL: DEBUG
           # base directory for include files
