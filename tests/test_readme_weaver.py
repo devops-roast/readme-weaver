@@ -112,3 +112,95 @@ def test_base_dir_env_var(tmp_path: Path, monkeypatch) -> None:
     weaver()
     updated = read_file(readme)
     assert "Hello env" in updated
+
+
+def make_weaver(readme: Path) -> ReadmeWeaver:
+    return ReadmeWeaver(
+        readme_paths=[str(readme)],
+        changed_files=None,
+        include_metadata_extractor=IncludeMetadataExtractor(),
+        include_content_reader=IncludeContentReader(),
+    )
+
+
+def test_output_is_formatter_stable(tmp_path: Path, monkeypatch) -> None:
+    """
+    The woven block is separated by blank lines, matching what markdown
+    formatters (e.g. mdformat) produce, so they do not rewrite it afterwards.
+    """
+    write_file(tmp_path / "sponsorship.md", "\n## Sponsorship\n\nSupport us!\n\n\n")
+    readme = tmp_path / "README.md"
+    write_file(
+        readme,
+        "# Project\n"
+        "\n"
+        '<!-- md:include start path="sponsorship.md" -->\n'
+        "\n"
+        "<!-- md:include end -->\n",
+    )
+    monkeypatch.setenv("README_WEAVER_BASE", str(tmp_path))
+
+    make_weaver(readme)()
+
+    assert read_file(readme) == (
+        "# Project\n"
+        "\n"
+        '<!-- md:include start path="sponsorship.md" -->\n'
+        "\n"
+        "<!-- content below is auto-generated; do not edit -->\n"
+        "\n"
+        "## Sponsorship\n"
+        "\n"
+        "Support us!\n"
+        "\n"
+        "<!-- md:include end -->\n"
+    )
+
+
+def test_rerun_is_idempotent(tmp_path: Path, monkeypatch) -> None:
+    """Running the tool on an already woven README changes nothing."""
+    write_file(tmp_path / "sponsorship.md", "## Sponsorship\n\nSupport us!\n")
+    readme = tmp_path / "README.md"
+    write_file(
+        readme,
+        'Intro\n<!-- md:include start path="sponsorship.md" -->\nold\n<!-- md:include end -->\nOutro\n',
+    )
+    monkeypatch.setenv("README_WEAVER_BASE", str(tmp_path))
+
+    make_weaver(readme)()
+    first = read_file(readme)
+    make_weaver(readme)()
+
+    assert read_file(readme) == first
+
+
+def test_directives_in_code_fences_are_ignored(tmp_path: Path, monkeypatch) -> None:
+    """Directives inside fenced code blocks are examples and stay untouched."""
+    write_file(tmp_path / "real.md", "Real content")
+    readme = tmp_path / "README.md"
+    examples = (
+        "```markdown\n"
+        '<!-- md:include start path="missing.md" required=true -->\n'
+        "example\n"
+        "<!-- md:include end -->\n"
+        "```\n"
+        "\n"
+        "~~~~\n"
+        "```\n"
+        '<!-- md:include start path="missing.md" -->\n'
+        "<!-- md:include end -->\n"
+        "~~~~\n"
+    )
+    write_file(
+        readme,
+        examples + '\n<!-- md:include start path="real.md" -->\n<!-- md:include end -->\n',
+    )
+    monkeypatch.setenv("README_WEAVER_BASE", str(tmp_path))
+
+    # Would raise FileNotFoundError if the fenced (required) examples were
+    # treated as includes.
+    make_weaver(readme)()
+    updated = read_file(readme)
+
+    assert updated.startswith(examples)
+    assert "Real content" in updated

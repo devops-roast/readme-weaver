@@ -80,7 +80,12 @@ class ReadmeWeaver:
 
         for include in sorted(include_contents, key=lambda x: x.readme_start):
             updated_readme += readme_content[readme_content_cursor : include.readme_start + 1]
-            updated_readme += include.content + "\n"
+            # Keep a blank line between the markers and the woven content so
+            # the result is already in the shape markdown formatters produce.
+            updated_readme.append("\n")
+            if include.content:
+                updated_readme.append(include.content)
+                updated_readme.append("\n")
 
             readme_content_cursor = include.readme_end
 

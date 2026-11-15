@@ -45,12 +45,27 @@ class IncludeMetadataExtractor:
             r"<!--\s*md:include\s+start\s+([^>]*)-->", re.IGNORECASE
         )
         self._include_end_regex = re.compile(r"<!--\s*md:include\s+end\s*-->", re.IGNORECASE)
+        # Opening/closing line of a fenced code block (CommonMark: up to three
+        # spaces of indentation, then at least three backticks or tildes).
+        self._fence_regex = re.compile(r"^ {0,3}(`{3,}|~{3,})")
 
     def extract(self, readme_content: list[str]) -> list[IncludeMetadata]:
         includes: list[IncludeMetadata] = []
         current: dict | None = None
+        fence: str | None = None
 
         for row, line in enumerate(readme_content):
+            # Directives inside fenced code blocks are documentation examples,
+            # not includes, so they are skipped.
+            fence_match = self._fence_regex.match(line)
+            if fence is not None:
+                if self._closes_fence(line, fence_match, fence):
+                    fence = None
+                continue
+            if fence_match:
+                fence = fence_match.group(1)
+                continue
+
             start_match = self._include_start_regex.search(line)
             end_match = self._include_end_regex.search(line)
 
@@ -84,6 +99,21 @@ class IncludeMetadataExtractor:
                 current = None
 
         return includes
+
+    @staticmethod
+    def _closes_fence(line: str, fence_match: re.Match | None, fence: str) -> bool:
+        """
+        A closing fence uses the same character as the opening one, is at
+        least as long, and is followed by nothing but whitespace.
+        """
+        if not fence_match:
+            return False
+        marker = fence_match.group(1)
+        return (
+            marker[0] == fence[0]
+            and len(marker) >= len(fence)
+            and not line[fence_match.end() :].strip()
+        )
 
     @staticmethod
     def _parse_attrs(attr_str: str) -> dict:
