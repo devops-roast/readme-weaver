@@ -13,6 +13,10 @@
           "type": "toml",
           "path": "uv.lock",
           "jsonpath": "$.package[?(@.name.value=='readme-weaver')].version"
+        },
+        {
+          "type": "generic",
+          "path": "README.md"
         }
       ]
     }
