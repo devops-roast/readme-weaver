@@ -72,9 +72,7 @@ weave partials on each pull request. Here’s a sample workflow:
 name: readme weaver
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
 
 permissions:
   contents: write
@@ -84,22 +82,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: checkout partials
         uses: actions/checkout@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           repository: devops-roast/.github
-          path: partials
+          # A hidden directory keeps the partials repository's own markdown
+          # out of the scan. The container action can only read files inside
+          # the workspace, so the partials cannot live elsewhere.
+          path: .partials
           ref: main
 
+      - name: keep partials out of commits
+        run: echo "/.partials/" >> .git/info/exclude
+
       - name: run readme weaver
-        uses: devops-roast/readme-weaver@v0
+        uses: devops-roast/readme-weaver@v0.1.1 # x-release-please-version
         env:
           LOG_LEVEL: DEBUG
-          # base directory for include files (if needed)
-          README_WEAVER_BASE: ./partials/.github/common-markdown-files
+          # base directory for include files
+          README_WEAVER_BASE: ./.partials/common-markdown
+
+      - name: commit changes back
+        uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: "docs: auto-update with readme-weaver"
 ```
+
+> [!NOTE]
+> Readme Weaver processes every `**/*.md` file under the working directory,
+> skipping hidden directories and anything inside fenced code blocks. Its output
+> keeps a blank line around the woven content, so formatters such as `mdformat`
+> leave it alone.
 
 ## 🔧 Setup – Pre‑Commit Hook
 
@@ -181,6 +197,7 @@ Actions), the section between the include tags is replaced:
 Welcome to my project.
 
 <!-- md:include start path="partials/sponsorship.md" required=true -->
+
 <!-- content below is auto-generated; do not edit -->
 
 ## Sponsor our work
